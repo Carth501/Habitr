@@ -1,0 +1,23 @@
+{
+  "name": "habitr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Carth501/Habitr.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Carth501/Habitr/issues"
+  },
+  "homepage": "https://github.com/Carth501/Habitr#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
