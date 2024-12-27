@@ -1,35 +1,132 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+
+interface Habit { title: string, description: string, progress: number, start: Date, end: Date };
 
 function App() {
-  const [count, setCount] = useState(0)
+
+    const [habits, setHabits] = useState<Habit[]>([
+    {
+        title: 'Exercise',
+        description: 'Daily morning exercise',
+        progress: 50,
+        start: new Date('2023-01-01'),
+        end: new Date('2023-12-31'),
+      },
+      {
+        title: 'Reading',
+        description: 'Read 30 minutes every day',
+        progress: 70,
+        start: new Date('2023-01-01'),
+        end: new Date('2023-12-31'),
+      },
+    ]);
+
+    const [newHabit, setNewHabit] = useState<Habit>({
+      title: '',
+      description: '',
+      progress: 0,
+      start: new Date(),
+      end: new Date(),
+    })
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target
+      setNewHabit({ ...newHabit, [name]: value })
+    }
+
+
+    const addHabit = () => {
+        setHabits([...habits, newHabit])
+        setNewHabit({
+          title: '',
+          description: '',
+          progress: 0,
+          start: new Date(),
+          end: new Date(),
+        })
+      }
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1> Habitr </h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Progress</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {habits.map((habit, index) => (
+              <tr key={index}>
+                <td>{habit.title}</td>
+                <td>{habit.description}</td>
+                <td>{habit.progress}%</td>
+                <td>{habit.start.toDateString()}</td>
+                <td>{habit.end.toDateString()}</td>
+              </tr>
+            ))}
+            <tr>
+              <td>
+                <input
+                  type="text"
+                  name="title"
+                  value={newHabit.title}
+                  onChange={handleInputChange}
+                  placeholder="Title"
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  name="description"
+                  value={newHabit.description}
+                  onChange={handleInputChange}
+                  placeholder="Description"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  name="progress"
+                  value={newHabit.progress}
+                  onChange={handleInputChange}
+                  placeholder="Progress"
+                  min="0"
+                  max="100"
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  name="start"
+                  value={newHabit.start.toISOString().split('T')[0]}
+                  onChange={handleInputChange}
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  name="end"
+                  value={newHabit.end.toISOString().split('T')[0]}
+                  onChange={handleInputChange}
+                />
+              </td>
+              <td>
+                <button onClick={addHabit}>Add Habit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
 
 export default App
+
