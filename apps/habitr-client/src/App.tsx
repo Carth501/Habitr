@@ -1,76 +1,72 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
-interface Habit { title: string, description: string, progress: number, start: Date, end: Date };
+interface Habit {
+  title: string;
+  description: string;
+  progress: number;
+  frequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
+  hour?: string; // Optional hour field
+}
 
 function App() {
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [newHabit, setNewHabit] = useState<Habit>({
+    title: '',
+    description: '',
+    progress: 0,
+    frequency: 'Daily',
+    hour: '',
+  });
 
-    const [habits, setHabits] = useState<Habit[]>([
-    {
-        title: 'Exercise',
-        description: 'Daily morning exercise',
-        progress: 50,
-        start: new Date('2023-01-01'),
-        end: new Date('2023-12-31'),
-      },
-      {
-        title: 'Reading',
-        description: 'Read 30 minutes every day',
-        progress: 70,
-        start: new Date('2023-01-01'),
-        end: new Date('2023-12-31'),
-      },
-    ]);
+  useEffect(() => {
+    fetchHabits();
+  }, []);
 
-    const [newHabit, setNewHabit] = useState<Habit>({
+  const fetchHabits = async () => {
+    const response = await fetch('http://localhost:4000/habits');
+    const data = await response.json();
+    setHabits(data);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewHabit({ ...newHabit, [name]: value });
+  };
+
+  const addHabit = async () => {
+    await fetch('http://localhost:4000/habits', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newHabit),
+    });
+    fetchHabits();
+    setNewHabit({
       title: '',
       description: '',
       progress: 0,
-      start: new Date(),
-      end: new Date(),
-    })
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target
-      setNewHabit({ ...newHabit, [name]: value })
-    }
-
-
-    const addHabit = () => {
-        setHabits([...habits, newHabit])
-        setNewHabit({
-          title: '',
-          description: '',
-          progress: 0,
-          start: new Date(),
-          end: new Date(),
-        })
-      }
+      frequency: 'Daily',
+      hour: '',
+    });
+  };
 
   return (
     <>
       <div>
-        <h1> Habitr </h1>
+        <h1>Habitr</h1>
         <table>
           <thead>
             <tr>
               <th>Title</th>
               <th>Description</th>
               <th>Progress</th>
-              <th>Start Date</th>
-              <th>End Date</th>
+              <th>Frequency</th>
+              <th>Hour</th>
             </tr>
           </thead>
           <tbody>
-            {habits.map((habit, index) => (
-              <tr key={index}>
-                <td>{habit.title}</td>
-                <td>{habit.description}</td>
-                <td>{habit.progress}%</td>
-                <td>{habit.start.toDateString()}</td>
-                <td>{habit.end.toDateString()}</td>
-              </tr>
-            ))}
             <tr>
               <td>
                 <input
@@ -102,31 +98,46 @@ function App() {
                 />
               </td>
               <td>
-                <input
-                  type="date"
-                  name="start"
-                  value={newHabit.start.toISOString().split('T')[0]}
+                <select
+                  name="frequency"
+                  value={newHabit.frequency}
                   onChange={handleInputChange}
-                />
+                >
+                  <option value="Hourly">Hourly</option>
+                  <option value="Daily">Daily</option>
+                  <option value="Weekly">Weekly</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Yearly">Yearly</option>
+                </select>
               </td>
               <td>
                 <input
-                  type="date"
-                  name="end"
-                  value={newHabit.end.toISOString().split('T')[0]}
+                  type="time"
+                  name="hour"
+                  value={newHabit.hour}
                   onChange={handleInputChange}
+                  disabled={newHabit.frequency !== 'Daily'}
                 />
               </td>
               <td>
                 <button onClick={addHabit}>Add Habit</button>
               </td>
             </tr>
+            {habits.map((habit, index) => (
+              <tr key={index}>
+                <td>{habit.title}</td>
+                <td>{habit.description}</td>
+                <td>{habit.progress}%</td>
+                <td>{habit.frequency}</td>
+                <td>{habit.frequency === 'Daily' ? habit.hour : ''}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
 

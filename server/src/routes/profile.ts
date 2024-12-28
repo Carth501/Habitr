@@ -21,7 +21,6 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
     if (err) {
       return res.status(403).json({ message: 'Token is invalid or expired.' });
     }
-    // Store decoded user in request for further use
     (req as any).user = user;
     next();
   });
