@@ -126,7 +126,7 @@ function App() {
             {habits.map((habit, index) => (
               <tr key={index}>
                 <td>{habit.title}</td>
-                <td>{habit.description}</td>
+                <td className='description-cell'>{habit.description}</td>
                 <td>{habit.progress}%</td>
                 <td>{habit.frequency}</td>
                 <td>{habit.frequency === 'Daily' ? habit.hour : ''}</td>

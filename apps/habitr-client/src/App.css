@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.description-cell {
+  width: 300px;
+  overflow-wrap: break-word;
+}
