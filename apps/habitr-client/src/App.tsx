@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react';
 import './App.css';
 
 interface Habit {
+  id: number;
   title: string;
   description: string;
   progress: number;
   frequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
   hour?: string; // Optional hour field
+  suspended?: boolean;
 }
 
 function App() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [newHabit, setNewHabit] = useState<Habit>({
+    id: 0,
     title: '',
     description: '',
     progress: 0,
@@ -44,12 +47,34 @@ function App() {
     });
     fetchHabits();
     setNewHabit({
+      id: 0,
       title: '',
       description: '',
       progress: 0,
       frequency: 'Daily',
       hour: '',
     });
+  };
+
+  const updateHabit = async (id: number, updatedHabit: Habit) => {
+    await fetch(`http://localhost:4000/habits/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedHabit),
+    });
+    fetchHabits();
+  };
+
+  const toggleSuspended = (id: number) => {
+    const updatedHabits = habits.map((habit, i) => {
+      if (i === id) {
+        updateHabit(habit.id, { ...habit, suspended: !habit.suspended });
+      }
+      return habit;
+    });
+    setHabits(updatedHabits);
   };
 
   return (
@@ -59,6 +84,7 @@ function App() {
         <table>
           <thead>
             <tr>
+              <th>Actions</th>
               <th>Title</th>
               <th>Description</th>
               <th>Progress</th>
@@ -68,6 +94,7 @@ function App() {
           </thead>
           <tbody>
             <tr>
+              <td></td>
               <td>
                 <input
                   type="text"
@@ -123,8 +150,12 @@ function App() {
                 <button onClick={addHabit}>Add Habit</button>
               </td>
             </tr>
-            {habits.map((habit, index) => (
-              <tr key={index}>
+            {habits.map((habit) => (
+              <tr key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
+                <td>
+                  <button onClick={() => toggleSuspended(habit.id)}>Suspend</button>
+                  <button>Second Action</button>
+                </td>
                 <td>{habit.title}</td>
                 <td className='description-cell'>{habit.description}</td>
                 <td>{habit.progress}%</td>
@@ -140,4 +171,3 @@ function App() {
 }
 
 export default App;
-

@@ -14,7 +14,8 @@ const initializeDb = async () => {
       description TEXT,
       progress INTEGER NOT NULL,
       frequency TEXT NOT NULL,
-      hour TEXT
+      hour TEXT,
+      suspended BOOLEAN DEFAULT FALSE
     )
   `);
 
