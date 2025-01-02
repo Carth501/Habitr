@@ -77,6 +77,13 @@ function App() {
     setHabits(updatedHabits);
   };
 
+  const deleteHabit = async (id: number) => {
+    await fetch(`http://localhost:4000/habits/${id}`, {
+      method: 'DELETE',
+    });
+    fetchHabits();
+  }
+
   return (
     <>
       <div>
@@ -154,7 +161,7 @@ function App() {
               <tr key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
                 <td>
                   <button onClick={() => toggleSuspended(habit.id)}>Suspend</button>
-                  <button>Second Action</button>
+                  <button onClick={() => deleteHabit(habit.id)}>Delete</button>
                 </td>
                 <td>{habit.title}</td>
                 <td className='description-cell'>{habit.description}</td>
