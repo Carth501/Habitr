@@ -9,6 +9,7 @@ interface Habit {
   frequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
   hour?: string; // Optional hour field
   suspended?: boolean;
+  lastDone?: string; // Timestamp of the last completion
 }
 
 function App() {
@@ -68,8 +69,8 @@ function App() {
   };
 
   const toggleSuspended = (id: number) => {
-    const updatedHabits = habits.map((habit, i) => {
-      if (i === id) {
+    const updatedHabits = habits.map((habit) => {
+      if (habit.id === id) {
         updateHabit(habit.id, { ...habit, suspended: !habit.suspended });
       }
       return habit;
@@ -82,13 +83,43 @@ function App() {
       method: 'DELETE',
     });
     fetchHabits();
-  }
+  };
+
+  const markHabitDone = async (id: number) => {
+    const updatedHabits = habits.map((habit) => {
+      if (habit.id === id) {
+        const now = new Date().toISOString();
+        updateHabit(habit.id, { ...habit, lastDone: now });
+      }
+      return habit;
+    });
+    setHabits(updatedHabits);
+  };
+
+  const isHabitDue = (habit: Habit) => {
+    if (!habit.lastDone) return true;
+    const lastDone = new Date(habit.lastDone);
+    const now = new Date();
+    switch (habit.frequency) {
+      case 'Hourly':
+        return now.getTime() - lastDone.getTime() >= 3600000;
+      case 'Daily':
+        return now.getDate() !== lastDone.getDate();
+      case 'Weekly':
+        return now.getTime() - lastDone.getTime() >= 604800000;
+      case 'Monthly':
+        return now.getMonth() !== lastDone.getMonth();
+      case 'Yearly':
+        return now.getFullYear() !== lastDone.getFullYear();
+      default:
+        return false;
+    }
+  };
 
   return (
     <>
-      <div>
         <h1>Habitr</h1>
-        <table>
+        <table className='habits-table'>
           <thead>
             <tr>
               <th>Actions</th>
@@ -162,6 +193,8 @@ function App() {
                 <td>
                   <button onClick={() => toggleSuspended(habit.id)}>Suspend</button>
                   <button onClick={() => deleteHabit(habit.id)}>Delete</button>
+                  <button onClick={() => markHabitDone(habit.id)} 
+                    disabled={!isHabitDue(habit)}>Mark as Done</button>
                 </td>
                 <td>{habit.title}</td>
                 <td className='description-cell'>{habit.description}</td>
@@ -172,7 +205,6 @@ function App() {
             ))}
           </tbody>
         </table>
-      </div>
     </>
   );
 }
