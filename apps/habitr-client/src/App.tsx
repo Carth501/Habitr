@@ -168,11 +168,8 @@ function App() {
                   value={newHabit.frequency}
                   onChange={handleInputChange}
                 >
-                  <option value="Hourly">Hourly</option>
                   <option value="Daily">Daily</option>
                   <option value="Weekly">Weekly</option>
-                  <option value="Monthly">Monthly</option>
-                  <option value="Yearly">Yearly</option>
                 </select>
               </td>
               <td>
