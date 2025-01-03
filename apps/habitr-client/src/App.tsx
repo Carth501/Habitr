@@ -1,29 +1,13 @@
-import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from 'react';
 import './App.css';
+import DarkModeToggle from './components/DarkModeToggle';
+import HabitTable from './components/HabitTable';
 
-type Frequency = 'Daily' | 'Weekly';
+export type Frequency = 'Daily' | 'Weekly';
 
-interface Habit {
+export interface Habit {
   id: number;
   title: string;
   description: string;
@@ -151,6 +135,7 @@ function App() {
         return false;
     }
   };
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     if (!darkMode) {
@@ -162,72 +147,20 @@ function App() {
 
   return (
     <>
-        <div className='flex justify-end'>
-            <Switch checked={darkMode} onCheckedChange={() => {toggleDarkMode()}}/> 
-            Dark Mode
-        </div>
-        <h1>Habitr</h1>
-        <Table className='habits-table'>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>Actions</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Frequency</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                <TableRow>
-                <TableCell></TableCell>
-                <TableCell>
-                    <Input
-                    type="text"
-                    name="title"
-                    value={newHabit.title}
-                    onChange={handleInputChange}
-                    placeholder="Title"
-                    />
-                </TableCell>
-                <TableCell>
-                    <Input
-                    type="text"
-                    name="description"
-                    value={newHabit.description}
-                    onChange={handleInputChange}
-                    placeholder="Description"
-                    />
-                </TableCell>
-                <TableCell>
-                    <Select value={newHabit.frequency} onValueChange={handleFreqChange}>
-                        <SelectTrigger className="w-[120px]">
-                            <SelectValue placeholder="Frequency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='Daily'>Daily</SelectItem>
-                            <SelectItem value='Weekly'>Weekly</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </TableCell>
-                <TableCell>
-                    <Button onClick={addHabit}>Add Habit</Button>
-                </TableCell>
-                </TableRow>
-                {habits.map((habit) => (
-                <TableRow key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
-                    <TableCell>
-                    <Button onClick={() => toggleSuspended(habit.id)}>Suspend</Button>
-                    <Button onClick={() => deleteHabit(habit.id)}>Delete</Button>
-                    <Button onClick={() => markHabitDone(habit.id)} 
-                        disabled={!isHabitDue(habit)}>Mark as Done</Button>
-                    </TableCell>
-                    <TableCell className='title-cell'>{habit.title}</TableCell>
-                    <TableCell className='description-cell'>{habit.description}</TableCell>
-                    <TableCell>{habit.frequency}</TableCell>
-                </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-        <Toaster />
+      <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <h1>Habitr</h1>
+      <HabitTable
+        habits={habits}
+        newHabit={newHabit}
+        handleInputChange={handleInputChange}
+        handleFreqChange={handleFreqChange}
+        addHabit={addHabit}
+        toggleSuspended={toggleSuspended}
+        deleteHabit={deleteHabit}
+        markHabitDone={markHabitDone}
+        isHabitDue={isHabitDue}
+      />
+      <Toaster />
     </>
   );
 }
