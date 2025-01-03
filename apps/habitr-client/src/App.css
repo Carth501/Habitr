@@ -48,3 +48,8 @@
   width: 300px;
   overflow-wrap: break-word;
 }
+
+.title-cell {
+  width: 200px;
+  overflow-wrap: break-word;
+}

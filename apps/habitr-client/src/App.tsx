@@ -1,8 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import { useEffect, useState } from 'react';
 import './App.css';
+  
 
 interface Habit {
   id: number;
@@ -135,21 +144,19 @@ function App() {
             Dark Mode
         </div>
         <h1>Habitr</h1>
-        <table className='habits-table'>
-        <thead>
-            <tr>
-            <th>Actions</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Progress</th>
-            <th>Frequency</th>
-            <th>Hour</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <td></td>
-            <td>
+        <Table className='habits-table'>
+        <TableHeader>
+            <TableRow>
+                <TableHead>Actions</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Frequency</TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            <TableRow>
+            <TableCell></TableCell>
+            <TableCell>
                 <Input
                 type="text"
                 name="title"
@@ -157,8 +164,8 @@ function App() {
                 onChange={handleInputChange}
                 placeholder="Title"
                 />
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
                 <Input
                 type="text"
                 name="description"
@@ -166,19 +173,8 @@ function App() {
                 onChange={handleInputChange}
                 placeholder="Description"
                 />
-            </td>
-            <td>
-                <Input
-                type="number"
-                name="progress"
-                value={newHabit.progress}
-                onChange={handleInputChange}
-                placeholder="Progress"
-                min="0"
-                max="100"
-                />
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
                 <select
                 name="frequency"
                 value={newHabit.frequency}
@@ -187,37 +183,26 @@ function App() {
                 <option value="Daily">Daily</option>
                 <option value="Weekly">Weekly</option>
                 </select>
-            </td>
-            <td>
-                <Input
-                type="time"
-                name="hour"
-                value={newHabit.hour}
-                onChange={handleInputChange}
-                disabled={newHabit.frequency !== 'Daily'}
-                />
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
                 <Button onClick={addHabit}>Add Habit</Button>
-            </td>
-            </tr>
+            </TableCell>
+            </TableRow>
             {habits.map((habit) => (
-            <tr key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
-                <td>
+            <TableRow key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
+                <TableCell>
                 <Button onClick={() => toggleSuspended(habit.id)}>Suspend</Button>
                 <Button onClick={() => deleteHabit(habit.id)}>Delete</Button>
                 <Button onClick={() => markHabitDone(habit.id)} 
                     disabled={!isHabitDue(habit)}>Mark as Done</Button>
-                </td>
-                <td>{habit.title}</td>
-                <td className='description-cell'>{habit.description}</td>
-                <td>{habit.progress}%</td>
-                <td>{habit.frequency}</td>
-                <td>{habit.frequency === 'Daily' ? habit.hour : ''}</td>
-            </tr>
+                </TableCell>
+                <TableCell className='title-cell'>{habit.title}</TableCell>
+                <TableCell className='description-cell'>{habit.description}</TableCell>
+                <TableCell>{habit.frequency}</TableCell>
+            </TableRow>
             ))}
-        </tbody>
-        </table>
+        </TableBody>
+        </Table>
     </>
   );
 }
