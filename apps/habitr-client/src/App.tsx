@@ -9,9 +9,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from 'react';
 import './App.css';
-  
 
 interface Habit {
   id: number;
@@ -35,6 +36,7 @@ function App() {
     hour: '',
   });
   const [darkMode, setDarkMode] = useState(true);
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchHabits();
@@ -58,6 +60,10 @@ function App() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(newHabit),
+    });
+    toast({
+      title: newHabit.title,
+      description: newHabit.description,
     });
     fetchHabits();
     setNewHabit({
@@ -145,64 +151,65 @@ function App() {
         </div>
         <h1>Habitr</h1>
         <Table className='habits-table'>
-        <TableHeader>
-            <TableRow>
-                <TableHead>Actions</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Frequency</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            <TableRow>
-            <TableCell></TableCell>
-            <TableCell>
-                <Input
-                type="text"
-                name="title"
-                value={newHabit.title}
-                onChange={handleInputChange}
-                placeholder="Title"
-                />
-            </TableCell>
-            <TableCell>
-                <Input
-                type="text"
-                name="description"
-                value={newHabit.description}
-                onChange={handleInputChange}
-                placeholder="Description"
-                />
-            </TableCell>
-            <TableCell>
-                <select
-                name="frequency"
-                value={newHabit.frequency}
-                onChange={handleInputChange}
-                >
-                <option value="Daily">Daily</option>
-                <option value="Weekly">Weekly</option>
-                </select>
-            </TableCell>
-            <TableCell>
-                <Button onClick={addHabit}>Add Habit</Button>
-            </TableCell>
-            </TableRow>
-            {habits.map((habit) => (
-            <TableRow key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>Actions</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Frequency</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                <TableCell></TableCell>
                 <TableCell>
-                <Button onClick={() => toggleSuspended(habit.id)}>Suspend</Button>
-                <Button onClick={() => deleteHabit(habit.id)}>Delete</Button>
-                <Button onClick={() => markHabitDone(habit.id)} 
-                    disabled={!isHabitDue(habit)}>Mark as Done</Button>
+                    <Input
+                    type="text"
+                    name="title"
+                    value={newHabit.title}
+                    onChange={handleInputChange}
+                    placeholder="Title"
+                    />
                 </TableCell>
-                <TableCell className='title-cell'>{habit.title}</TableCell>
-                <TableCell className='description-cell'>{habit.description}</TableCell>
-                <TableCell>{habit.frequency}</TableCell>
-            </TableRow>
-            ))}
-        </TableBody>
+                <TableCell>
+                    <Input
+                    type="text"
+                    name="description"
+                    value={newHabit.description}
+                    onChange={handleInputChange}
+                    placeholder="Description"
+                    />
+                </TableCell>
+                <TableCell>
+                    <select
+                    name="frequency"
+                    value={newHabit.frequency}
+                    onChange={handleInputChange}
+                    >
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    </select>
+                </TableCell>
+                <TableCell>
+                    <Button onClick={addHabit}>Add Habit</Button>
+                </TableCell>
+                </TableRow>
+                {habits.map((habit) => (
+                <TableRow key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
+                    <TableCell>
+                    <Button onClick={() => toggleSuspended(habit.id)}>Suspend</Button>
+                    <Button onClick={() => deleteHabit(habit.id)}>Delete</Button>
+                    <Button onClick={() => markHabitDone(habit.id)} 
+                        disabled={!isHabitDue(habit)}>Mark as Done</Button>
+                    </TableCell>
+                    <TableCell className='title-cell'>{habit.title}</TableCell>
+                    <TableCell className='description-cell'>{habit.description}</TableCell>
+                    <TableCell>{habit.frequency}</TableCell>
+                </TableRow>
+                ))}
+            </TableBody>
         </Table>
+        <Toaster />
     </>
   );
 }
