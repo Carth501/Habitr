@@ -1,5 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
     Table,
@@ -14,12 +21,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from 'react';
 import './App.css';
 
+type Frequency = 'Daily' | 'Weekly';
+
 interface Habit {
   id: number;
   title: string;
   description: string;
   progress: number;
-  frequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
+  frequency: Frequency;
   hour?: string; // Optional hour field
   suspended?: boolean;
   lastDone?: string; // Timestamp of the last completion
@@ -51,6 +60,10 @@ function App() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewHabit({ ...newHabit, [name]: value });
+  };
+
+  const handleFreqChange = (value: Frequency) => {
+    setNewHabit({ ...newHabit, frequency: value });
   };
 
   const addHabit = async () => {
@@ -120,16 +133,10 @@ function App() {
     const lastDone = new Date(habit.lastDone);
     const now = new Date();
     switch (habit.frequency) {
-      case 'Hourly':
-        return now.getTime() - lastDone.getTime() >= 3600000;
       case 'Daily':
         return now.getDate() !== lastDone.getDate();
       case 'Weekly':
         return now.getTime() - lastDone.getTime() >= 604800000;
-      case 'Monthly':
-        return now.getMonth() !== lastDone.getMonth();
-      case 'Yearly':
-        return now.getFullYear() !== lastDone.getFullYear();
       default:
         return false;
     }
@@ -181,14 +188,15 @@ function App() {
                     />
                 </TableCell>
                 <TableCell>
-                    <select
-                    name="frequency"
-                    value={newHabit.frequency}
-                    onChange={handleInputChange}
-                    >
-                    <option value="Daily">Daily</option>
-                    <option value="Weekly">Weekly</option>
-                    </select>
+                    <Select value={newHabit.frequency} onValueChange={handleFreqChange}>
+                        <SelectTrigger className="w-[120px]">
+                            <SelectValue placeholder="Frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='Daily'>Daily</SelectItem>
+                            <SelectItem value='Weekly'>Weekly</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </TableCell>
                 <TableCell>
                     <Button onClick={addHabit}>Add Habit</Button>
