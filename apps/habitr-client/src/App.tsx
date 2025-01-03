@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from 'react';
 import './App.css';
@@ -149,7 +150,7 @@ function App() {
             <tr>
             <td></td>
             <td>
-                <input
+                <Input
                 type="text"
                 name="title"
                 value={newHabit.title}
@@ -158,7 +159,7 @@ function App() {
                 />
             </td>
             <td>
-                <input
+                <Input
                 type="text"
                 name="description"
                 value={newHabit.description}
@@ -167,7 +168,7 @@ function App() {
                 />
             </td>
             <td>
-                <input
+                <Input
                 type="number"
                 name="progress"
                 value={newHabit.progress}
@@ -188,7 +189,7 @@ function App() {
                 </select>
             </td>
             <td>
-                <input
+                <Input
                 type="time"
                 name="hour"
                 value={newHabit.hour}
