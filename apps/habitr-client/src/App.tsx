@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button';
+import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from 'react';
 import './App.css';
 
@@ -22,6 +24,7 @@ function App() {
     frequency: 'Daily',
     hour: '',
   });
+  const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
     fetchHabits();
@@ -115,92 +118,104 @@ function App() {
         return false;
     }
   };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    if (!darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
 
   return (
     <>
+        <div className='flex justify-end'>
+            <Switch checked={darkMode} onCheckedChange={() => {toggleDarkMode()}}/> 
+            Dark Mode
+        </div>
         <h1>Habitr</h1>
         <table className='habits-table'>
-          <thead>
+        <thead>
             <tr>
-              <th>Actions</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Progress</th>
-              <th>Frequency</th>
-              <th>Hour</th>
+            <th>Actions</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Progress</th>
+            <th>Frequency</th>
+            <th>Hour</th>
             </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
             <tr>
-              <td></td>
-              <td>
+            <td></td>
+            <td>
                 <input
-                  type="text"
-                  name="title"
-                  value={newHabit.title}
-                  onChange={handleInputChange}
-                  placeholder="Title"
+                type="text"
+                name="title"
+                value={newHabit.title}
+                onChange={handleInputChange}
+                placeholder="Title"
                 />
-              </td>
-              <td>
+            </td>
+            <td>
                 <input
-                  type="text"
-                  name="description"
-                  value={newHabit.description}
-                  onChange={handleInputChange}
-                  placeholder="Description"
+                type="text"
+                name="description"
+                value={newHabit.description}
+                onChange={handleInputChange}
+                placeholder="Description"
                 />
-              </td>
-              <td>
+            </td>
+            <td>
                 <input
-                  type="number"
-                  name="progress"
-                  value={newHabit.progress}
-                  onChange={handleInputChange}
-                  placeholder="Progress"
-                  min="0"
-                  max="100"
+                type="number"
+                name="progress"
+                value={newHabit.progress}
+                onChange={handleInputChange}
+                placeholder="Progress"
+                min="0"
+                max="100"
                 />
-              </td>
-              <td>
+            </td>
+            <td>
                 <select
-                  name="frequency"
-                  value={newHabit.frequency}
-                  onChange={handleInputChange}
+                name="frequency"
+                value={newHabit.frequency}
+                onChange={handleInputChange}
                 >
-                  <option value="Daily">Daily</option>
-                  <option value="Weekly">Weekly</option>
+                <option value="Daily">Daily</option>
+                <option value="Weekly">Weekly</option>
                 </select>
-              </td>
-              <td>
+            </td>
+            <td>
                 <input
-                  type="time"
-                  name="hour"
-                  value={newHabit.hour}
-                  onChange={handleInputChange}
-                  disabled={newHabit.frequency !== 'Daily'}
+                type="time"
+                name="hour"
+                value={newHabit.hour}
+                onChange={handleInputChange}
+                disabled={newHabit.frequency !== 'Daily'}
                 />
-              </td>
-              <td>
-                <button onClick={addHabit}>Add Habit</button>
-              </td>
+            </td>
+            <td>
+                <Button onClick={addHabit}>Add Habit</Button>
+            </td>
             </tr>
             {habits.map((habit) => (
-              <tr key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
+            <tr key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
                 <td>
-                  <button onClick={() => toggleSuspended(habit.id)}>Suspend</button>
-                  <button onClick={() => deleteHabit(habit.id)}>Delete</button>
-                  <button onClick={() => markHabitDone(habit.id)} 
-                    disabled={!isHabitDue(habit)}>Mark as Done</button>
+                <Button onClick={() => toggleSuspended(habit.id)}>Suspend</Button>
+                <Button onClick={() => deleteHabit(habit.id)}>Delete</Button>
+                <Button onClick={() => markHabitDone(habit.id)} 
+                    disabled={!isHabitDue(habit)}>Mark as Done</Button>
                 </td>
                 <td>{habit.title}</td>
                 <td className='description-cell'>{habit.description}</td>
                 <td>{habit.progress}%</td>
                 <td>{habit.frequency}</td>
                 <td>{habit.frequency === 'Daily' ? habit.hour : ''}</td>
-              </tr>
+            </tr>
             ))}
-          </tbody>
+        </tbody>
         </table>
     </>
   );
