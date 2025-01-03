@@ -44,7 +44,7 @@ function App() {
     frequency: 'Daily',
     hour: '',
   });
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast()
 
   useEffect(() => {
@@ -118,13 +118,23 @@ function App() {
   };
 
   const markHabitDone = async (id: number) => {
-    const updatedHabits = habits.map((habit) => {
-      if (habit.id === id) {
-        const now = new Date().toISOString();
-        updateHabit(habit.id, { ...habit, lastDone: now });
-      }
-      return habit;
+    const now = new Date();
+    await fetch(`http://localhost:4000/habit-dates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ habit_id: id, date_time: now.toISOString() }),
     });
+
+    // Fetch the updated habit data
+    const response = await fetch(`http://localhost:4000/habits/${id}`);
+    const updatedHabit = await response.json();
+
+    // Update the habits state with the new data
+    const updatedHabits = habits.map((habit) =>
+      habit.id === id ? updatedHabit : habit
+    );
     setHabits(updatedHabits);
   };
 

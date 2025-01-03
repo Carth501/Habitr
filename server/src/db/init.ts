@@ -20,6 +20,15 @@ const initializeDb = async () => {
     )
   `);
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS habit_dates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      habit_id INTEGER NOT NULL,
+      date_time TEXT NOT NULL,
+      FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
+    )
+  `);
+
   return db;
 };
 
