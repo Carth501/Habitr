@@ -39,12 +39,16 @@ function App() {
   const fetchHabits = async () => {
     const response = await fetch('http://localhost:4000/habits');
     const data = await response.json();
-    console.log(data);
     const habitsWithCompletion = data.map((habit: Habit) => {
       const createdDate = new Date(habit.created);
       const now = new Date();
       const daysSinceCreated = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-      const progress = habit.entryCount ? Math.min((habit.entryCount / (daysSinceCreated + 1)) * 100, 100) : 0;
+      let progress = 0;
+      if(habit.frequency === 'Daily'){
+        progress = habit.entryCount ? Math.min((habit.entryCount / (daysSinceCreated + 1)) * 100, 100) : 0;
+      } else {
+        progress = habit.entryCount ? Math.min((habit.entryCount / (daysSinceCreated / 7 + 1)) * 100, 100) : 0;
+      }
       return { ...habit, progress };
     });
     setHabits(habitsWithCompletion);
