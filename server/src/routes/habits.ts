@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import express from 'express';
 import initializeDb from '../db/init';
 
-const router = Router();
+const router = express.Router();
 
 router.get('/', async (req, res) => {
   const db = await initializeDb();
@@ -9,6 +9,7 @@ router.get('/', async (req, res) => {
     SELECT h.*, MAX(hd.date_time) as lastDone
     FROM habits h
     LEFT JOIN habit_dates hd ON h.id = hd.habit_id
+    WHERE h.deleted = false
     GROUP BY h.id
   `);
   res.json(habits);
@@ -21,7 +22,7 @@ router.get('/:id', async (req, res) => {
     SELECT h.*, MAX(hd.date_time) as lastDone
     FROM habits h
     LEFT JOIN habit_dates hd ON h.id = hd.habit_id
-    WHERE h.id = ?
+    WHERE h.id = ? AND h.deleted = false
     GROUP BY h.id
   `, [id]);
 
@@ -36,8 +37,8 @@ router.post('/', async (req, res) => {
   const { title, description, progress, frequency, hour, suspended, lastDone } = req.body;
   const db = await initializeDb();
   await db.run(
-    'INSERT INTO habits (title, description, progress, frequency, hour, suspended, lastDone) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [title, description, progress, frequency, hour, suspended, lastDone]
+    'INSERT INTO habits (title, description, progress, frequency, hour, suspended, lastDone, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [title, description, progress, frequency, hour, suspended, lastDone, false]
   );
   res.status(201).json({ message: 'Habit created successfully.' });
 });
@@ -56,7 +57,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   const db = await initializeDb();
-  await db.run('DELETE FROM habits WHERE id = ?', [id]);
+  await db.run('UPDATE habits SET deleted = ? WHERE id = ?', [true, id]);
   res.json({ message: 'Habit deleted successfully.' });
 });
 

@@ -16,6 +16,7 @@ const initializeDb = async () => {
       frequency TEXT NOT NULL,
       hour TEXT,
       suspended BOOLEAN DEFAULT FALSE,
+      deleted BOOLEAN DEFAULT FALSE,
       lastDone TEXT
     )
   `);
@@ -25,6 +26,7 @@ const initializeDb = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       habit_id INTEGER NOT NULL,
       date_time TEXT NOT NULL,
+      deleted BOOLEAN DEFAULT FALSE,
       FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
     )
   `);
