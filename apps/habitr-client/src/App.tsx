@@ -43,12 +43,8 @@ function App() {
       const createdDate = new Date(habit.created);
       const now = new Date();
       const daysSinceCreated = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-      let progress = 0;
-      if(habit.frequency === 'Daily'){
-        progress = habit.entryCount ? Math.min((habit.entryCount / (daysSinceCreated + 1)) * 100, 100) : 0;
-      } else {
-        progress = habit.entryCount ? Math.min((habit.entryCount / (daysSinceCreated / 7 + 1)) * 100, 100) : 0;
-      }
+      const divisor = habit.frequency === 'Daily' ? daysSinceCreated : (daysSinceCreated / 7);
+      const progress = habit.entryCount ? Math.min((habit.entryCount / divisor + 1) * 100, 100) : 0;
       return { ...habit, progress };
     });
     setHabits(habitsWithCompletion);
