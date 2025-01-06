@@ -14,7 +14,7 @@ const initializeDb = async () => {
       description TEXT,
       progress INTEGER NOT NULL,
       frequency TEXT NOT NULL,
-      hour TEXT,
+      created TEXT,
       suspended BOOLEAN DEFAULT FALSE,
       deleted BOOLEAN DEFAULT FALSE,
       lastDone TEXT

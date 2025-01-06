@@ -34,22 +34,23 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { title, description, progress, frequency, hour, suspended, lastDone } = req.body;
+  const { title, description, progress, frequency, suspended, lastDone } = req.body;
+  const created = new Date().toISOString(); // Get the current date and time
   const db = await initializeDb();
   await db.run(
-    'INSERT INTO habits (title, description, progress, frequency, hour, suspended, lastDone, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [title, description, progress, frequency, hour, suspended, lastDone, false]
+    'INSERT INTO habits (title, description, progress, frequency, created, suspended, lastDone, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [title, description, progress, frequency, created, suspended, lastDone, false]
   );
   res.status(201).json({ message: 'Habit created successfully.' });
 });
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { title, description, progress, frequency, hour, suspended, lastDone } = req.body;
+  const { title, description, progress, frequency, suspended, lastDone } = req.body;
   const db = await initializeDb();
   await db.run(
-    'UPDATE habits SET title = ?, description = ?, progress = ?, frequency = ?, hour = ?, suspended = ?, lastDone = ? WHERE id = ?',
-    [title, description, progress, frequency, hour, suspended, lastDone, id]
+    'UPDATE habits SET title = ?, description = ?, progress = ?, frequency = ?, suspended = ?, lastDone = ? WHERE id = ?',
+    [title, description, progress, frequency, suspended, lastDone, id]
   );
   res.json({ message: 'Habit updated successfully.' });
 });
