@@ -14,7 +14,9 @@ interface HabitFormProps {
 const HabitForm: React.FC<HabitFormProps> = ({ newHabit, handleInputChange, handleFreqChange, addHabit }) => {
   return (
     <TableRow>
-      <TableCell></TableCell>
+      <TableCell>
+        <Button onClick={addHabit}>Add Habit</Button>
+      </TableCell>
       <TableCell>
         <Input
           type="text"
@@ -44,9 +46,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ newHabit, handleInputChange, hand
           </SelectContent>
         </Select>
       </TableCell>
-      <TableCell>
-        <Button onClick={addHabit}>Add Habit</Button>
-      </TableCell>
+      <TableCell></TableCell>
     </TableRow>
   );
 };

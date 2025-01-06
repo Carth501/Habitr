@@ -13,9 +13,10 @@ export interface Habit {
   description: string;
   progress: number;
   frequency: Frequency;
-  hour?: string; // Optional hour field
+  created: string;
   suspended?: boolean;
-  lastDone?: string; // Timestamp of the last completion
+  lastDone?: string;
+  entryCount?: number; // Add entryCount to the Habit interface
 }
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
     description: '',
     progress: 0,
     frequency: 'Daily',
-    hour: '',
+    created: '',
   });
   const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast()
@@ -38,7 +39,15 @@ function App() {
   const fetchHabits = async () => {
     const response = await fetch('http://localhost:4000/habits');
     const data = await response.json();
-    setHabits(data);
+    console.log(data);
+    const habitsWithCompletion = data.map((habit: Habit) => {
+      const createdDate = new Date(habit.created);
+      const now = new Date();
+      const daysSinceCreated = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+      const progress = habit.entryCount ? Math.min((habit.entryCount / (daysSinceCreated + 1)) * 100, 100) : 0;
+      return { ...habit, progress };
+    });
+    setHabits(habitsWithCompletion);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -56,7 +65,7 @@ function App() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newHabit),
+      body: JSON.stringify({ ...newHabit }),
     });
     toast({
       title: newHabit.title,
@@ -69,7 +78,7 @@ function App() {
       description: '',
       progress: 0,
       frequency: 'Daily',
-      hour: '',
+      created: '',
     });
   };
 
@@ -111,11 +120,9 @@ function App() {
       body: JSON.stringify({ habit_id: id, date_time: now.toISOString() }),
     });
 
-    // Fetch the updated habit data
     const response = await fetch(`http://localhost:4000/habits/${id}`);
     const updatedHabit = await response.json();
 
-    // Update the habits state with the new data
     const updatedHabits = habits.map((habit) =>
       habit.id === id ? updatedHabit : habit
     );

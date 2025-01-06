@@ -34,6 +34,7 @@ const HabitTable: React.FC<HabitTableProps> = ({
           <TableHead>Title</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Frequency</TableHead>
+          <TableHead>Completion %</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

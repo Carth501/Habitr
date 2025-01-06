@@ -11,6 +11,8 @@ interface HabitRowProps {
 }
 
 const HabitRow: React.FC<HabitRowProps> = ({ habit, toggleSuspended, deleteHabit, markHabitDone, isHabitDue }) => {
+  const completionPercentage = habit.progress;
+
   return (
     <TableRow key={habit.id} style={{ textDecoration: habit.suspended ? 'line-through' : 'none' }}>
       <TableCell>
@@ -21,6 +23,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit, toggleSuspended, deleteHabit
       <TableCell className='title-cell'>{habit.title}</TableCell>
       <TableCell className='description-cell'>{habit.description}</TableCell>
       <TableCell>{habit.frequency}</TableCell>
+      <TableCell>{completionPercentage}%</TableCell>
     </TableRow>
   );
 };

@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const db = await initializeDb();
   const habits = await db.all(`
-    SELECT h.*, MAX(hd.date_time) as lastDone
+    SELECT h.*, MAX(hd.date_time) as lastDone, COUNT(hd.id) as entryCount
     FROM habits h
     LEFT JOIN habit_dates hd ON h.id = hd.habit_id
     WHERE h.deleted = false
@@ -19,7 +19,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const db = await initializeDb();
   const habit = await db.get(`
-    SELECT h.*, MAX(hd.date_time) as lastDone
+    SELECT h.*, MAX(hd.date_time) as lastDone, COUNT(hd.id) as entryCount
     FROM habits h
     LEFT JOIN habit_dates hd ON h.id = hd.habit_id
     WHERE h.id = ? AND h.deleted = false
