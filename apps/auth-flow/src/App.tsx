@@ -31,7 +31,10 @@ function App() {
     })
     const data = await response.json()
     setMessage(data.message)
-    window.location.href = `${VITE_CLIENT_URL}`
+    if(response.status === 200) {
+        window.location.href = `${VITE_CLIENT_URL}`
+    }
+
   }
 
   return (
