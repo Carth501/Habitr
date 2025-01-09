@@ -1,12 +1,15 @@
 import bcrypt from 'bcrypt';
 import { Request, RequestHandler, Response, Router } from "express";
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Users { [key: string]: { passwordHash: string; photo?: string }};
 
 export const users: Users = {};
 const router = Router();
 
+// Assuming you have a sessions object to store session data
+const sessions: { [key: string]: { username: string } } = {};
 
 const signupHandler: RequestHandler = async (req: Request, res: Response) => {
     const { name, password, photo } = req.body;
@@ -36,16 +39,26 @@ const loginHandler = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
-  // Compare password
   const match = await bcrypt.compare(password.trim(), userRecord.passwordHash);
   if (!match) {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
-  // Create token
-  // For a real app, store a SECRET in environment variables
-  const token = jwt.sign({ name: name.trim() }, 'MY_SUPER_SECRET', { expiresIn: '1h' });
-  return res.json({ token });
+  const sessionId = uuidv4();
+  sessions[sessionId] = { username: name.trim() };
+
+  const token = jwt.sign({ name: name.trim(), sessionId }, 'MY_SUPER_SECRET', { expiresIn: '1h' });
+
+  // Set the token as an HTTP-only cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Set to true in production
+    sameSite: 'strict',
+    domain: 'localhost', // Adjust this for your domain
+    path: '/',
+  });
+
+  return res.json({ message: 'Login successful' });
 };
 
 router.post('/login', loginHandler);

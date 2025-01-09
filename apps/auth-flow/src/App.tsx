@@ -34,7 +34,6 @@ function App() {
     if(response.status === 200) {
         window.location.href = `${VITE_CLIENT_URL}`
     }
-
   }
 
   return (
