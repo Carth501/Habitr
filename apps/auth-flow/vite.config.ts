@@ -14,7 +14,7 @@ export default defineConfig({
       },
       // Proxy auth requests to the auth-flow server
       '/auth': {
-        target: 'http://localhost:5173',
+        target: 'http://localhost:4000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/auth/, ''),
       },
