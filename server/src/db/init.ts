@@ -31,6 +31,15 @@ const initializeDb = async () => {
     )
   `);
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      passwordHash TEXT NOT NULL,
+      photo TEXT
+    )
+  `);
+
   return db;
 };
 
