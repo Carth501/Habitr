@@ -54,16 +54,16 @@ const loginHandler = async (req: Request, res: Response) => {
   const sessionId = uuidv4();
   sessions[sessionId] = { username: name.trim() };
 
+  // TODO Secure the secret with an environment variable
   const token = jwt.sign({ name: name.trim(), sessionId }, 'MY_SUPER_SECRET', { expiresIn: '1h' });
 
-  // Set the token as an HTTP-only cookie
   res.cookie('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Set to true in production
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    domain: 'localhost', // Adjust this for your domain
+    domain: 'localhost',
     path: '/',
-  });
+  }); 
 
   return res.json({ message: 'Login successful' });
 };

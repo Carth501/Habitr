@@ -8,10 +8,19 @@ import habitsRouter from './routes/habits';
 const app = express();
 app.use(json());
 
+// TODO: Softcode the URLs
+const habitrClientUrl = 'http://localhost:4001';
+const authFlowUrl = 'http://localhost:5173';
+const allowedOrigins = [habitrClientUrl, authFlowUrl];
+
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
 

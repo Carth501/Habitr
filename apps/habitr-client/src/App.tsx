@@ -16,7 +16,7 @@ export interface Habit {
   created: string;
   suspended?: boolean;
   lastDone?: string;
-  entryCount?: number; // Add entryCount to the Habit interface
+  entryCount?: number;
 }
 
 function App() {
@@ -37,7 +37,7 @@ function App() {
   }, []);
 
   const fetchHabits = async () => {
-    const response = await fetch('http://localhost:4000/habits');
+    const response = await fetch('http://localhost:4000/habits', {credentials: 'include'});
     const data = await response.json();
     const habitsWithCompletion = data.map(calculateCompletionPercentage);
     setHabits(habitsWithCompletion);
@@ -112,6 +112,7 @@ function App() {
   const deleteHabit = async (id: number) => {
     await fetch(`http://localhost:4000/habits/${id}`, {
       method: 'DELETE',
+      credentials: 'include',
     });
     fetchHabits();
   };
@@ -124,6 +125,7 @@ function App() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ habit_id: id, date_time: now.toISOString() }),
+      credentials: 'include',
     });
 
     const response = await fetch(`http://localhost:4000/habits/${id}`);

@@ -35,7 +35,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { title, description, progress, frequency, suspended, lastDone } = req.body;
-  const created = new Date().toISOString(); // Get the current date and time
+  const created = new Date().toISOString();
   const db = await initializeDb();
   await db.run(
     'INSERT INTO habits (title, description, progress, frequency, created, suspended, lastDone, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',

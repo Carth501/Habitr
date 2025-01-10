@@ -11,12 +11,20 @@ export default defineConfig({
         target: 'http://localhost:4001',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/client/, ''),
+        secure: false,
+        cookieDomainRewrite: {
+          "*": "localhost"
+        }
       },
       // Proxy auth requests to the auth-flow server
       '/auth': {
         target: 'http://localhost:4000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/auth/, ''),
+        secure: false,
+        cookieDomainRewrite: {
+          "*": "localhost"
+        }
       },
     },
   },

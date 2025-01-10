@@ -17,7 +17,8 @@ const initializeDb = async () => {
       created TEXT,
       suspended BOOLEAN DEFAULT FALSE,
       deleted BOOLEAN DEFAULT FALSE,
-      lastDone TEXT
+      lastDone TEXT,
+      FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
 
