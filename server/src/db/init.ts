@@ -17,8 +17,9 @@ const initializeDb = async () => {
       created TEXT,
       suspended BOOLEAN DEFAULT FALSE,
       deleted BOOLEAN DEFAULT FALSE,
-      lastDone TEXT,
-      FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
+      last_done TEXT,
+      user_id INTEGER NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
 
@@ -36,7 +37,7 @@ const initializeDb = async () => {
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL UNIQUE,
-      passwordHash TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
       photo TEXT
     )
   `);

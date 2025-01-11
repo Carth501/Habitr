@@ -13,7 +13,6 @@ function App() {
     const response = await fetch(`${API_URL}/auth/signup`, {
       method: 'POST',
       headers: {
-        'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name: username, password }),

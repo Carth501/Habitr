@@ -26,8 +26,8 @@ const signupHandler: RequestHandler = async (req: Request, res: Response) => {
         return res.status(409).json({ message: 'User already exists.' });
     }
 
-    const passwordHash = await bcrypt.hash(password.trim(), 10);
-    const result = await db.run('INSERT INTO users (name, passwordHash, photo) VALUES (?, ?, ?)', [name, passwordHash, photo?.trim()]);
+    const password_hash = await bcrypt.hash(password.trim(), 10);
+    const result = await db.run('INSERT INTO users (name, password_hash, photo) VALUES (?, ?, ?)', [name, password_hash, photo?.trim()]);
     return res.status(201).json({ message: 'User created successfully.' });
 };
 
@@ -46,7 +46,7 @@ const loginHandler = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
-  const match = await bcrypt.compare(password.trim(), userRecord.passwordHash);
+  const match = await bcrypt.compare(password.trim(), userRecord.password_hash);
   if (!match) {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
@@ -55,7 +55,7 @@ const loginHandler = async (req: Request, res: Response) => {
   sessions[sessionId] = { username: name.trim() };
 
   // TODO Secure the secret with an environment variable
-  const token = jwt.sign({ name: name.trim(), sessionId }, 'MY_SUPER_SECRET', { expiresIn: '1h' });
+  const token = jwt.sign({ uid: userRecord.id }, 'MY_SUPER_SECRET', { expiresIn: '1h' });
 
   res.cookie('token', token, {
     httpOnly: true,

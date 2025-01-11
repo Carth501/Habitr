@@ -15,7 +15,7 @@ export interface Habit {
   frequency: Frequency;
   created: string;
   suspended?: boolean;
-  lastDone?: string;
+  last_done?: string;
   entryCount?: number;
 }
 
@@ -138,14 +138,14 @@ function App() {
   };
 
   const isHabitDue = (habit: Habit) => {
-    if (!habit.lastDone) return true;
-    const lastDone = new Date(habit.lastDone);
+    if (!habit.last_done) return true;
+    const last_done = new Date(habit.last_done);
     const now = new Date();
     switch (habit.frequency) {
       case 'Daily':
-        return now.getDate() !== lastDone.getDate();
+        return now.getDate() !== last_done.getDate();
       case 'Weekly':
-        return now.getTime() - lastDone.getTime() >= 604800000;
+        return now.getTime() - last_done.getTime() >= 604800000;
       default:
         return false;
     }
