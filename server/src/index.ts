@@ -6,6 +6,7 @@ import habitDatesRouter from './routes/habitDates';
 import habitsRouter from './routes/habits';
 
 const app = express();
+const cors = require('cors');
 app.use(json());
 
 app.use((req, res, next) => {
@@ -22,18 +23,21 @@ app.use((req, res, next) => {
 
 // TODO: Softcode the URLs
 const habitrClientUrl = 'http://localhost:4001';
-const authFlowUrl = 'http://localhost:5173';
-const allowedOrigins = [habitrClientUrl, authFlowUrl];
+const allowedOrigins = [habitrClientUrl];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, credentials');
   res.header('Access-Control-Allow-Credentials', 'true');
-  next();
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
 
 app.use('/auth', authRouter);

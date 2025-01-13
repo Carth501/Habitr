@@ -46,8 +46,6 @@ const loginHandler = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
-  console.log("userRecord: ", userRecord);
-  console.log("password.trim(): ", password.trim());
   const match = await bcrypt.compare(password.trim(), userRecord.password_hash);
   if (!match) {
     return res.status(401).json({ message: 'Invalid credentials.' });
