@@ -1,21 +1,24 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import initializeDb from '../db/init';
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    console.log(req.cookies);
-    const token = jwt.decode(req.cookies.token);
-    console.log(token);
+  const raw_token = req.cookies.token;
+  const token = jwt.verify(raw_token, 'MY_SUPER_SECRET') as JwtPayload;
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const user_id = token.uid;
   const db = await initializeDb();
   const habits = await db.all(`
     SELECT h.*, MAX(hd.date_time) as last_done, COUNT(hd.id) as entryCount
     FROM habits h
     LEFT JOIN habit_dates hd ON h.id = hd.habit_id
-    WHERE h.deleted = false
+    WHERE h.deleted = false AND h.user_id = ?
     GROUP BY h.id
-  `);
+  `, [user_id]);
   res.json(habits);
 });
 

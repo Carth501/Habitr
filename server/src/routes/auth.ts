@@ -26,8 +26,8 @@ const signupHandler: RequestHandler = async (req: Request, res: Response) => {
         return res.status(409).json({ message: 'User already exists.' });
     }
 
-    const password_hash = await bcrypt.hash(password.trim(), 10);
-    const result = await db.run('INSERT INTO users (name, password_hash, photo) VALUES (?, ?, ?)', [name, password_hash, photo?.trim()]);
+    const passwordHash = await bcrypt.hash(password.trim(), 10);
+    const result = await db.run('INSERT INTO users (name, password_hash, photo) VALUES (?, ?, ?)', [name, passwordHash, photo?.trim()]);
     return res.status(201).json({ message: 'User created successfully.' });
 };
 
@@ -46,6 +46,8 @@ const loginHandler = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
+  console.log("userRecord: ", userRecord);
+  console.log("password.trim(): ", password.trim());
   const match = await bcrypt.compare(password.trim(), userRecord.password_hash);
   if (!match) {
     return res.status(401).json({ message: 'Invalid credentials.' });

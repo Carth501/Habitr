@@ -8,6 +8,18 @@ import habitsRouter from './routes/habits';
 const app = express();
 app.use(json());
 
+app.use((req, res, next) => {
+  const cookieHeader = req.headers.cookie;
+  req.cookies = {};
+  if (cookieHeader) {
+    cookieHeader.split(';').forEach(cookie => {
+      const [name, ...rest] = cookie.split('=');
+      req.cookies[name.trim()] = decodeURIComponent(rest.join('='));
+    });
+  }
+  next();
+});
+
 // TODO: Softcode the URLs
 const habitrClientUrl = 'http://localhost:4001';
 const authFlowUrl = 'http://localhost:5173';

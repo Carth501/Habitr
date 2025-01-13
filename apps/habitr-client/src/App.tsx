@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import DarkModeToggle from './components/DarkModeToggle';
 import HabitTable from './components/HabitTable';
+import Login from "./components/Login";
 
 export type Frequency = 'Daily' | 'Weekly';
 
@@ -30,7 +31,7 @@ function App() {
     created: '',
   });
   const [darkMode, setDarkMode] = useState(false);
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchHabits();
@@ -83,20 +84,6 @@ function App() {
       created: '',
     });
   };
-
-//   const updateHabit = async (id: number, updatedHabit: Habit) => {
-//     await fetch(`http://localhost:4000/habits/${id}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(updatedHabit),
-//     });
-//     const updatedHabits = habits.map((habit) =>
-//       habit.id === id ? calculateCompletionPercentage(updatedHabit) : habit
-//     );
-//     setHabits(updatedHabits);
-//   };
 
   const toggleSuspended = (id: number) => {
     const updatedHabits = habits.map((habit) => {
@@ -160,9 +147,17 @@ function App() {
     }
   }
 
+  const displayMessage = (message: { title: string; description: string }) => {
+    toast({
+      title: message.title,
+      description: message.description,
+    });
+  }
+
   return (
     <>
       <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <Login onLogin={fetchHabits} onMessage={displayMessage}/>
       <h1>Habitr</h1>
       <HabitTable
         habits={habits}
