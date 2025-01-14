@@ -9,9 +9,21 @@ const getUserID = async (req, res) => {
     if (!raw_token) {
       return null
     }
-    const token = jwt.verify(raw_token, 'MY_SUPER_SECRET') as JwtPayload;
-    if (!token) {
-      return null
+    let token: JwtPayload;
+    try {
+      token = jwt.verify(raw_token, 'MY_SUPER_SECRET') as JwtPayload;
+      // Proceed with the token
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        // Handle token expiration error
+        res.status(401).send({ error: 'Token expired' });
+      } else {
+        // Handle other errors
+        res.status(401).send({ error: 'Invalid token' });
+      }
+    }
+    if(!token) {
+        return null;
     }
     return token.uid;
 }

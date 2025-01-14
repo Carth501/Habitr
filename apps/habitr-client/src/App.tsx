@@ -5,6 +5,7 @@ import './App.css';
 import DarkModeToggle from './components/DarkModeToggle';
 import HabitTable from './components/HabitTable';
 import Login from "./components/Login";
+import { Button } from "./components/ui/button";
 
 export type Frequency = 'Daily' | 'Weekly';
 
@@ -32,10 +33,21 @@ function App() {
   });
   const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast();
+  const [user, setUser] = useState('');
 
   useEffect(() => {
     fetchHabits();
   }, []);
+
+  const loginUser = async (username: string) => {
+    setUser(username);
+    fetchHabits();
+  }
+  
+  const logoutUser = () => {
+    setUser('');
+    setHabits([]);
+  }
 
   const fetchHabits = async () => {
     const response = await fetch('http://localhost:4000/habits', {credentials: 'include'});
@@ -157,10 +169,13 @@ function App() {
 
   return (
     <>
-      <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-      <Login onLogin={fetchHabits} onMessage={displayMessage}/>
+      <div className='flex space-between items-center'>
+        <Button onClick={() => logoutUser()}>Logout</Button>
+        <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      </div>
       <h1>Habitr</h1>
-      <HabitTable
+      {!user && <Login onLogin={loginUser} onMessage={displayMessage}/>}
+      {user && <HabitTable
         habits={habits}
         newHabit={newHabit}
         handleInputChange={handleInputChange}
@@ -170,7 +185,7 @@ function App() {
         deleteHabit={deleteHabit}
         markHabitDone={markHabitDone}
         isHabitDue={isHabitDue}
-      />
+      />}
       <Toaster />
     </>
   );

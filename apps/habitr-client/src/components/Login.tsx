@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const Login = ({ onLogin, onMessage }: { onLogin: () => void, onMessage: (message: { title: string, description: string }) => void }) => {
+const Login = ({ onLogin, onMessage }: { onLogin: (username: string) => void, onMessage: (message: { title: string, description: string }) => void }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -32,7 +32,7 @@ const Login = ({ onLogin, onMessage }: { onLogin: () => void, onMessage: (messag
     });
     const data = await response.json();
     if (response.ok) {
-      onLogin();
+      onLogin(username);
     } else {
       onMessage({ title: 'Login Failed', description: data.message });
     }
