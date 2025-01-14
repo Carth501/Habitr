@@ -1,37 +1,36 @@
 import express from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import initializeDb from '../db/init';
 
 const router = express.Router();
 
 const getUserID = async (req, res) => {
-    const raw_token = req.cookies.token;
-    if (!raw_token) {
+    const sessionID = req.cookies.session;
+    if (!sessionID) {
       return null
     }
-    let token: JwtPayload;
-    try {
-      token = jwt.verify(raw_token, 'MY_SUPER_SECRET') as JwtPayload;
-      // Proceed with the token
-    } catch (err) {
-      if (err instanceof jwt.TokenExpiredError) {
-        // Handle token expiration error
-        res.status(401).send({ error: 'Token expired' });
-      } else {
-        // Handle other errors
-        res.status(401).send({ error: 'Invalid token' });
-      }
+    const db = await initializeDb();
+    const session = await db.get(`
+        SELECT * FROM sessions WHERE id = ?
+    `, [sessionID]);
+    if (!session)  {
+        res.status(401).send({ error: 'Invalid session' });
+        return null
+    } 
+    if (session.ended) {
+        res.status(401).send({ error: 'Invalid session' });
+        return null
     }
-    if(!token) {
-        return null;
+    if(session.expiry < new Date().toISOString()) {
+        res.status(401).send({ error: 'Session expired' });
+        return null
     }
-    return token.uid;
+    return session.user_id;
 }
 
 router.get('/', async (req, res) => {
   const user_id = getUserID(req, res);
   if(user_id === null) {
-    res.status(401).json({ message: 'Unauthorized' });
+    return
   }
   const db = await initializeDb();
   const habits = await db.all(`

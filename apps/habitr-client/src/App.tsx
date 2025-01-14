@@ -169,8 +169,8 @@ function App() {
 
   return (
     <>
-      <div className='flex space-between items-center'>
-        <Button onClick={() => logoutUser()}>Logout</Button>
+      <div className='flex justify-between items-center'>
+        <Button onClick={() => logoutUser()} disabled={!user}>Logout</Button>
         <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
       <h1>Habitr</h1>
