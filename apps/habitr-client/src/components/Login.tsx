@@ -39,7 +39,7 @@ const Login = ({ onLogin, onMessage }: { onLogin: (username: string) => void, on
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} className='max-w-md mx-auto'>
       <div>
         <label>Username:</label>
         <Input
