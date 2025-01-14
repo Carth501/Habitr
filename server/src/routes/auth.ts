@@ -67,4 +67,18 @@ const loginHandler = async (req: Request, res: Response) => {
 
 router.post('/login', loginHandler);
 
+const logoutHandler = async (req: Request, res: Response) => {
+    const sessionID = req.cookies.session;
+    if (!sessionID) {
+        return res.status(400).json({ message: 'No session' });
+    }
+    
+    const db = await initializeDb();
+    await db.run('UPDATE FROM sessions SET ended = ? WHERE id = ?', [true, sessionID]);
+    res.clearCookie('session');
+    return res.json({ message: 'Logged out' });
+};
+
+router.put('/logout', logoutHandler);
+
 export default router;

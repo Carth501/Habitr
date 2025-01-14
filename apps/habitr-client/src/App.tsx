@@ -9,6 +9,8 @@ import { Button } from "./components/ui/button";
 
 export type Frequency = 'Daily' | 'Weekly';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export interface Habit {
   id: number;
   title: string;
@@ -44,13 +46,20 @@ function App() {
     fetchHabits();
   }
   
-  const logoutUser = () => {
+  const logoutUser = async () => {
     setUser('');
     setHabits([]);
+    await fetch(`${API_URL}/auth/logout`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'credentials': 'include',
+      }
+    });
   }
 
   const fetchHabits = async () => {
-    const response = await fetch('http://localhost:4000/habits', {credentials: 'include'});
+    const response = await fetch(`${API_URL}/habits`, {credentials: 'include'});
     const data = await response.json();
     const habitsWithCompletion = data.map(calculateCompletionPercentage);
     setHabits(habitsWithCompletion);
@@ -75,7 +84,7 @@ function App() {
   };
 
   const addHabit = async () => {
-    await fetch('http://localhost:4000/habits', {
+    await fetch(`${API_URL}/habits`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +119,7 @@ function App() {
   };
 
   const deleteHabit = async (id: number) => {
-    await fetch(`http://localhost:4000/habits/${id}`, {
+    await fetch(`${API_URL}/habits/${id}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -119,7 +128,7 @@ function App() {
 
   const markHabitDone = async (id: number) => {
     const now = new Date();
-    await fetch(`http://localhost:4000/habit-dates`, {
+    await fetch(`${API_URL}/habit-dates`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -128,7 +137,7 @@ function App() {
       credentials: 'include',
     });
 
-    const response = await fetch(`http://localhost:4000/habits/${id}`);
+    const response = await fetch(`${API_URL}/habits/${id}`);
     const updatedHabit = await response.json();
 
     const updatedHabits = habits.map((habit) =>
