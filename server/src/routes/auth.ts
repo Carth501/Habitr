@@ -74,7 +74,7 @@ const logoutHandler = async (req: Request, res: Response) => {
     }
     
     const db = await initializeDb();
-    await db.run('UPDATE FROM sessions SET ended = ? WHERE id = ?', [true, sessionID]);
+    await db.run('UPDATE sessions SET ended = ? WHERE id = ?', [true, sessionID]);
     res.clearCookie('session');
     return res.json({ message: 'Logged out' });
 };

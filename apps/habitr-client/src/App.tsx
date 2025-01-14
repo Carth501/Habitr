@@ -53,8 +53,8 @@ function App() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'credentials': 'include',
-      }
+      },
+      credentials: 'include',
     });
   }
 
@@ -88,8 +88,8 @@ function App() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'credentials': 'include',
       },
+      credentials: 'include',
       body: JSON.stringify({ ...newHabit }),
     });
     toast({
