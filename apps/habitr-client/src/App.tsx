@@ -39,6 +39,8 @@ function App() {
 
   useEffect(() => {
     fetchHabits();
+    setDarkMode(false);
+    checkDarkModeCookie();
   }, []);
 
   const loginUser = async (username: string) => {
@@ -162,10 +164,18 @@ function App() {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
-    if (!darkMode) {
+    if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+    }
+    document.cookie = `darkMode=${darkMode};SameSite=Lax;`;
+  }
+
+  const checkDarkModeCookie = () => {
+    if (document.cookie.includes('darkMode=true')) {
+      setDarkMode(true);
+      document.documentElement.classList.add('dark');
     }
   }
 
