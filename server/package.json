@@ -15,7 +15,7 @@
     "jsonwebtoken": "^9.0.2",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "uuid": "^11.0.4"
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

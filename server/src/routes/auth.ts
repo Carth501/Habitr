@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Request, RequestHandler, Response, Router } from "express";
+import { v4 as uuidv4 } from 'uuid';
 import initializeDb from '../db/init';
 
 const router = Router();
@@ -49,7 +50,7 @@ const loginHandler = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
-  const sessionID = Math.random().toString(36).slice(2);
+  const sessionID = uuidv4();
   const expiry = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
   await db.run('INSERT INTO sessions (id, user_id, expiry) VALUES (?, ?, ?)', 
     [sessionID, userRecord.id, expiry]);
