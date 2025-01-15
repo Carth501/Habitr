@@ -52,10 +52,9 @@ const loginHandler = async (req: Request, res: Response) => {
 
   const sessionID = uuidv4();
   const expiry = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
-  await db.run('INSERT INTO sessions (id, user_id, expiry) VALUES (?, ?, ?)', 
-    [sessionID, userRecord.id, expiry]);
+  await db.run('INSERT INTO sessions (id, user_id, expiry, ended) VALUES (?, ?, ?, ?)', 
+    [sessionID, userRecord.id, expiry, !req.body.rememberMe]);
 
-  if(req.body.rememberMe) {
     res.cookie('session', sessionID, {
         httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
@@ -63,16 +62,13 @@ const loginHandler = async (req: Request, res: Response) => {
         domain: 'localhost',
         path: '/',
     }); 
-  } else {
-    res.clearCookie('session');
-  }
   return res.json({ message: 'Login successful' });
 };
 
 router.post('/login', loginHandler);
 
 const logoutHandler = async (req: Request, res: Response) => {
-    const sessionID = req.cookies.session;
+    const sessionID = req.body.session;
     if (!sessionID) {
         return res.status(400).json({ message: 'No session' });
     }

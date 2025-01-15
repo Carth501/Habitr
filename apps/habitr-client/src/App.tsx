@@ -71,12 +71,16 @@ function App() {
   };
 
   const logoutUser = async () => {
-    setUser('');
-    setHabits([]);
+    const sessionCookie = Cookies.get('session');
     await fetch(`${API_URL}/auth/logout`, {
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ session: sessionCookie }),
     });
-    Cookies.remove('session');
+    setUser('');
+    setHabits([]);
   };
 
   const fetchHabits = async () => {
