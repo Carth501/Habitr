@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
+import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import './App.css';
 import DarkModeToggle from './components/DarkModeToggle';
@@ -38,27 +39,44 @@ function App() {
   const [user, setUser] = useState('');
 
   useEffect(() => {
-    fetchHabits();
+    checkSession();
     setDarkMode(false);
     checkDarkModeCookie();
   }, []);
 
+  const checkSession = async () => {
+    const sessionCookie = Cookies.get('session');
+    if (sessionCookie) {
+      const response = await fetch(`${API_URL}/auth/check-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session: sessionCookie }),
+      });
+      const result = await response.json();
+      if (result.valid) {
+        setUser(result.username);
+        fetchHabits();
+      } else {
+        Cookies.remove('session');
+      }
+    }
+  };
+
   const loginUser = async (username: string) => {
     setUser(username);
     fetchHabits();
-  }
-  
+  };
+
   const logoutUser = async () => {
     setUser('');
     setHabits([]);
     await fetch(`${API_URL}/auth/logout`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
     });
-  }
+    Cookies.remove('session');
+  };
 
   const fetchHabits = async () => {
     const response = await fetch(`${API_URL}/habits`, {credentials: 'include'});

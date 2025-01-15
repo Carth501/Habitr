@@ -56,7 +56,7 @@ const loginHandler = async (req: Request, res: Response) => {
     [sessionID, userRecord.id, expiry]);
 
   res.cookie('session', sessionID, {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     domain: 'localhost',
@@ -81,5 +81,28 @@ const logoutHandler = async (req: Request, res: Response) => {
 };
 
 router.put('/logout', logoutHandler);
+
+const checkSession = async (req: Request, res: Response) => {
+    const sessionID = req.body.session;
+    if (!sessionID) {
+        return res.json({ valid: false });
+    }
+    console.log("sessionID ", sessionID);
+    const db = await initializeDb();
+    const session = await db.get(`
+        SELECT * FROM sessions WHERE id = ? AND ended IS FALSE AND expiry > ?
+    `, [sessionID, new Date().toISOString()]);
+    if (!session) {
+        return res.json({ valid: false });
+    }
+    console.log("session ", session);
+    const user = await db.get(`
+        SELECT name FROM users WHERE id = ?
+    `, [session.user_id]);
+    console.log("user ", user);
+    return res.json({ valid: true, username: user.name });
+};
+
+router.post('/check-session', checkSession);
 
 export default router;
