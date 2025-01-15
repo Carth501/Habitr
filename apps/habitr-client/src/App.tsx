@@ -37,6 +37,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast();
   const [user, setUser] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
 
   useEffect(() => {
     checkSession();
@@ -197,12 +198,12 @@ function App() {
     }
   }
 
-  const displayMessage = (message: { title: string; description: string }) => {
-    toast({
-      title: message.title,
-      description: message.description,
-    });
-  }
+//   const displayMessage = (message: { title: string; description: string }) => {
+//     toast({
+//       title: message.title,
+//       description: message.description,
+//     });
+//   }
 
   return (
     <>
@@ -211,7 +212,11 @@ function App() {
         <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
       <h1>Habitr</h1>
-      {!user && <Login onLogin={loginUser} onMessage={displayMessage}/>}
+      {!user && <Login 
+        onLogin={loginUser} 
+        onMessage={toast} 
+        rememberMe={rememberMe} 
+        setRememberMe={setRememberMe} />}
       {user && <HabitTable
         habits={habits}
         newHabit={newHabit}

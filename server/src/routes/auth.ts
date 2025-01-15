@@ -55,14 +55,17 @@ const loginHandler = async (req: Request, res: Response) => {
   await db.run('INSERT INTO sessions (id, user_id, expiry) VALUES (?, ?, ?)', 
     [sessionID, userRecord.id, expiry]);
 
-  res.cookie('session', sessionID, {
-    httpOnly: false,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    domain: 'localhost',
-    path: '/',
-  }); 
-
+  if(req.body.rememberMe) {
+    res.cookie('session', sessionID, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        domain: 'localhost',
+        path: '/',
+    }); 
+  } else {
+    res.clearCookie('session');
+  }
   return res.json({ message: 'Login successful' });
 };
 
@@ -87,7 +90,6 @@ const checkSession = async (req: Request, res: Response) => {
     if (!sessionID) {
         return res.json({ valid: false });
     }
-    console.log("sessionID ", sessionID);
     const db = await initializeDb();
     const session = await db.get(`
         SELECT * FROM sessions WHERE id = ? AND ended IS FALSE AND expiry > ?
@@ -95,11 +97,9 @@ const checkSession = async (req: Request, res: Response) => {
     if (!session) {
         return res.json({ valid: false });
     }
-    console.log("session ", session);
     const user = await db.get(`
         SELECT name FROM users WHERE id = ?
     `, [session.user_id]);
-    console.log("user ", user);
     return res.json({ valid: true, username: user.name });
 };
 

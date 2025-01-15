@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const Login = ({ onLogin, onMessage }: { onLogin: (username: string) => void, onMessage: (message: { title: string, description: string }) => void }) => {
+const Login = ({ onLogin, onMessage, rememberMe, setRememberMe }: { onLogin: (username: string) => void, onMessage: (message: { title: string, description: string }) => void, rememberMe: boolean, setRememberMe: (value: boolean) => void }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -27,14 +27,14 @@ const Login = ({ onLogin, onMessage }: { onLogin: (username: string) => void, on
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name: username, password }),
+      body: JSON.stringify({ name: username, password, rememberMe }),
       credentials: 'include',
     });
     const data = await response.json();
     if (response.ok) {
       onLogin(username);
     } else {
-      onMessage({ title: 'Login Failed', description: data.message });
+      onMessage({ title: 'Login', description: data.message });
     }
   };
 
@@ -56,8 +56,16 @@ const Login = ({ onLogin, onMessage }: { onLogin: (username: string) => void, on
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <Button type="submit">Login</Button>
-      <Button type="button" onClick={handleSignup}>Signup</Button>
+      <div className='flex'>
+        
+        <Button type="submit" className='m-0.5'>Login</Button>
+        <Button type="button" onClick={handleSignup} className='m-0.5'>Signup</Button>
+        <label className='flex text-xs m-0.5'>
+            <Input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} 
+            className='mr-0.5'/>
+            Remember me
+        </label>
+      </div>
     </form>
   );
 };
