@@ -7,27 +7,22 @@ import HabitTable from './components/HabitTable';
 import Login from './components/Login';
 import { Button } from './components/ui/button';
 import { Switch } from './components/ui/switch';
-import useDataStore from './data.store';
+import useDataStore, { Habit } from './data.store';
 import useUiSettingsStore from './ui-settings.store';
 
 export type Frequency = 'Daily' | 'Weekly';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export interface Habit {
-	id: number;
-	title: string;
-	description: string;
-	progress: number;
-	frequency: Frequency;
-	created: string;
-	suspended?: boolean;
-	last_done?: string;
-	entryCount?: number;
-}
-
 function App() {
-	const [habits, setHabits] = useState<Habit[]>([]);
+	const { darkMode, toggleDarkMode } = useUiSettingsStore();
+	if (darkMode) {
+		document.documentElement.classList.add('dark');
+	} else {
+		document.documentElement.classList.remove('dark');
+	}
+	const { toast } = useToast();
+	const { user, setUser, habits, setHabits } = useDataStore();
 	const [newHabit, setNewHabit] = useState<Habit>({
 		id: 0,
 		title: '',
@@ -36,14 +31,6 @@ function App() {
 		frequency: 'Daily',
 		created: '',
 	});
-	const { darkMode, toggleDarkMode } = useUiSettingsStore();
-	if (darkMode) {
-		document.documentElement.classList.add('dark');
-	} else {
-		document.documentElement.classList.remove('dark');
-	}
-	const { toast } = useToast();
-	const { user, setUser } = useDataStore();
 	const [rememberMe, setRememberMe] = useState(true);
 
 	useEffect(() => {
