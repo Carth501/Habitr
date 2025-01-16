@@ -1,3 +1,7 @@
 node_modules
 .env
 *.db
+.editorconfig
+.prettierrc
+.prettierignore
+eslint.config.mjs
