@@ -7,6 +7,7 @@ import HabitTable from './components/HabitTable';
 import Login from './components/Login';
 import { Button } from './components/ui/button';
 import { Switch } from './components/ui/switch';
+import useDataStore from './data.store';
 import useUiSettingsStore from './ui-settings.store';
 
 export type Frequency = 'Daily' | 'Weekly';
@@ -42,7 +43,7 @@ function App() {
 		document.documentElement.classList.remove('dark');
 	}
 	const { toast } = useToast();
-	const [user, setUser] = useState('');
+	const { user, setUser } = useDataStore();
 	const [rememberMe, setRememberMe] = useState(true);
 
 	useEffect(() => {
@@ -195,23 +196,6 @@ function App() {
 				return false;
 		}
 	};
-
-	// const toggleDarkModeX = () => {
-	//   setDarkMode(!darkMode);
-	//   if (darkMode) {
-	//     document.documentElement.classList.add('dark');
-	//   } else {
-	//     document.documentElement.classList.remove('dark');
-	//   }
-	//   document.cookie = `darkMode=${darkMode};SameSite=Lax;`;
-	// }
-
-	//   const displayMessage = (message: { title: string; description: string }) => {
-	//     toast({
-	//       title: message.title,
-	//       description: message.description,
-	//     });
-	//   }
 
 	return (
 		<div className={darkMode ? 'dark' : ''}>
