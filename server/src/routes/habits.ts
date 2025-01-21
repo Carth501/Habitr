@@ -5,7 +5,6 @@ const router = express.Router();
 
 const getUserID = async (req, res) => {
 	const sessionID = req.cookies.session;
-	console.log(sessionID);
 	if (!sessionID) {
 		return null;
 	}
