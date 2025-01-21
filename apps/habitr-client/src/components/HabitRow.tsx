@@ -34,7 +34,7 @@ const HabitRow: React.FC<HabitRowProps> = ({
 			<TableCell className="title-cell">{habit.title}</TableCell>
 			<TableCell className="description-cell">{habit.description}</TableCell>
 			<TableCell>{habit.frequency}</TableCell>
-			<TableCell>{completionPercentage}%</TableCell>
+			<TableCell>{Math.round(completionPercentage)}%</TableCell>
 		</TableRow>
 	);
 };
