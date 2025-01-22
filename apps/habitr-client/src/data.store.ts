@@ -17,6 +17,8 @@ interface DataStoreState {
 	setUser: (data: string) => void;
 	habits: Habit[];
 	setHabits: (data: Habit[]) => void;
+	rememberMe: boolean;
+	setRememberMe: (value: boolean) => void;
 }
 
 const useDataStore = create<DataStoreState>((set) => ({
@@ -27,6 +29,10 @@ const useDataStore = create<DataStoreState>((set) => ({
 	habits: [],
 	setHabits: (data: Habit[]) => {
 		set({ habits: data });
+	},
+	rememberMe: true,
+	setRememberMe: (value: boolean) => {
+		set({ rememberMe: value });
 	},
 }));
 

@@ -22,7 +22,7 @@ function App() {
 		document.documentElement.classList.remove('dark');
 	}
 	const { toast } = useToast();
-	const { user, setUser, habits, setHabits } = useDataStore();
+	const { user, setUser, habits, setHabits, rememberMe, setRememberMe } = useDataStore();
 	const [newHabit, setNewHabit] = useState<Habit>({
 		id: 0,
 		title: '',
@@ -31,7 +31,6 @@ function App() {
 		frequency: 'Daily',
 		created: '',
 	});
-	const [rememberMe, setRememberMe] = useState(true);
 
 	useEffect(() => {
 		checkSession();
