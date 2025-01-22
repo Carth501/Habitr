@@ -1,6 +1,6 @@
-import { Habit } from '@/App';
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { Habit } from '@/data.store';
 
 interface HabitRowProps {
 	habit: Habit;
