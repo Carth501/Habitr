@@ -1,5 +1,13 @@
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
+import {
+	addHabit,
+	checkSession,
+	deleteHabit,
+	fetchHabits,
+	logoutUser,
+	markHabitDone,
+} from '@/services/habit.proxy';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import './App.css';
@@ -11,8 +19,6 @@ import useDataStore, { Habit } from './data.store';
 import useUiSettingsStore from './ui-settings.store';
 
 export type Frequency = 'Daily' | 'Weekly';
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
 	const { darkMode, toggleDarkMode } = useUiSettingsStore();
@@ -33,23 +39,16 @@ function App() {
 	});
 
 	useEffect(() => {
-		checkSession();
+		checkUserSession();
 	}, []);
 
-	const checkSession = async () => {
+	const checkUserSession = async () => {
 		const sessionCookie = Cookies.get('session');
 		if (sessionCookie) {
-			const response = await fetch(`${API_URL}/auth/check-session`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ session: sessionCookie }),
-			});
-			const result = await response.json();
+			const result = await checkSession(sessionCookie);
 			if (result.valid) {
 				setUser(result.username);
-				fetchHabits();
+				loadHabits();
 			} else {
 				Cookies.remove('session');
 			}
@@ -58,25 +57,20 @@ function App() {
 
 	const loginUser = async (username: string) => {
 		setUser(username);
-		fetchHabits();
+		loadHabits();
 	};
 
-	const logoutUser = async () => {
+	const logout = async () => {
 		const sessionCookie = Cookies.get('session');
-		await fetch(`${API_URL}/auth/logout`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ session: sessionCookie }),
-		});
+		if (sessionCookie) {
+			await logoutUser(sessionCookie);
+		}
 		setUser('');
 		setHabits([]);
 	};
 
-	const fetchHabits = async () => {
-		const response = await fetch(`${API_URL}/habits`, { credentials: 'include' });
-		const data = await response.json();
+	const loadHabits = async () => {
+		const data = await fetchHabits();
 		const habitsWithCompletion = data.map(calculateCompletionPercentage);
 		setHabits(habitsWithCompletion);
 	};
@@ -103,20 +97,13 @@ function App() {
 		setNewHabit({ ...newHabit, frequency: value });
 	};
 
-	const addHabit = async () => {
-		await fetch(`${API_URL}/habits`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			credentials: 'include',
-			body: JSON.stringify({ ...newHabit }),
-		});
+	const addNewHabit = async () => {
+		await addHabit(newHabit);
 		toast({
 			title: newHabit.title,
 			description: newHabit.description,
 		});
-		fetchHabits();
+		loadHabits();
 		setNewHabit({
 			id: 0,
 			title: '',
@@ -141,28 +128,13 @@ function App() {
 		setHabits(updatedHabits);
 	};
 
-	const deleteHabit = async (id: number) => {
-		await fetch(`${API_URL}/habits/${id}`, {
-			method: 'DELETE',
-			credentials: 'include',
-		});
-		fetchHabits();
+	const removeHabit = async (id: number) => {
+		await deleteHabit(id);
+		loadHabits();
 	};
 
-	const markHabitDone = async (id: number) => {
-		const now = new Date();
-		await fetch(`${API_URL}/habit-dates`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ habit_id: id, date_time: now.toISOString() }),
-			credentials: 'include',
-		});
-
-		const response = await fetch(`${API_URL}/habits/${id}`);
-		const updatedHabit = await response.json();
-
+	const markHabitAsDone = async (id: number) => {
+		const updatedHabit = await markHabitDone(id);
 		const updatedHabits = habits.map((habit) =>
 			habit.id === id ? calculateCompletionPercentage(updatedHabit) : habit,
 		);
@@ -186,7 +158,7 @@ function App() {
 	return (
 		<div className={darkMode ? 'dark' : ''}>
 			<div className="flex justify-between items-center">
-				<Button onClick={() => logoutUser()} disabled={!user}>
+				<Button onClick={() => logout()} disabled={!user}>
 					Logout
 				</Button>
 				<div className="flex items-center">
@@ -209,10 +181,10 @@ function App() {
 					newHabit={newHabit}
 					handleInputChange={handleInputChange}
 					handleFreqChange={handleFreqChange}
-					addHabit={addHabit}
+					addHabit={addNewHabit}
 					toggleSuspended={toggleSuspended}
-					deleteHabit={deleteHabit}
-					markHabitDone={markHabitDone}
+					deleteHabit={removeHabit}
+					markHabitDone={markHabitAsDone}
 					isHabitDue={isHabitDue}
 				/>
 			)}
