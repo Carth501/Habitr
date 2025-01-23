@@ -19,6 +19,9 @@ export const fetchHabits = async () => {
 };
 
 export const addHabit = async (newHabit: Habit) => {
+	if (newHabit.title === '' || newHabit.title === undefined) {
+		return;
+	}
 	await fetch(`${API_URL}/habits`, {
 		method: 'POST',
 		headers: {

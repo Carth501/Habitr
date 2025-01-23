@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/select';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Habit } from '@/data.store';
+import React, { useState } from 'react';
 
 interface HabitFormProps {
 	newHabit: Habit;
@@ -24,18 +25,35 @@ const HabitForm: React.FC<HabitFormProps> = ({
 	handleFreqChange,
 	addHabit,
 }) => {
+	const [titleError, setTitleError] = useState(false);
+
+	const handleAddHabit = () => {
+		if (!newHabit.title?.trim()) {
+			setTitleError(true);
+		} else {
+			setTitleError(false);
+			addHabit();
+		}
+	};
+
 	return (
 		<TableRow>
 			<TableCell>
-				<Button onClick={addHabit}>Add Habit</Button>
+				<Button onClick={handleAddHabit}>Add Habit</Button>
 			</TableCell>
 			<TableCell>
 				<Input
 					type="text"
 					name="title"
 					value={newHabit.title}
-					onChange={handleInputChange}
+					onChange={(e) => {
+						handleInputChange(e);
+						if (e.target.value.trim()) {
+							setTitleError(false);
+						}
+					}}
 					placeholder="Title"
+					style={{ borderColor: titleError ? 'red' : 'initial' }}
 				/>
 			</TableCell>
 			<TableCell>
