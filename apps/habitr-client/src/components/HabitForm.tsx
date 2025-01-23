@@ -9,8 +9,8 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Habit } from '@/data.store';
-import React, { useState } from 'react';
+import useDataStore, { Habit } from '@/data.store';
+import React from 'react';
 
 interface HabitFormProps {
 	newHabit: Habit;
@@ -25,7 +25,7 @@ const HabitForm: React.FC<HabitFormProps> = ({
 	handleFreqChange,
 	addHabit,
 }) => {
-	const [titleError, setTitleError] = useState(false);
+	const { titleError, setTitleError } = useDataStore();
 
 	const handleAddHabit = () => {
 		if (!newHabit.title?.trim()) {
