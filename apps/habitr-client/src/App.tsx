@@ -9,7 +9,7 @@ import {
 	markHabitDone,
 } from '@/services/habit.proxy';
 import Cookies from 'js-cookie';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
 import HabitTable from './components/HabitTable';
 import Login from './components/Login';
@@ -28,15 +28,8 @@ function App() {
 		document.documentElement.classList.remove('dark');
 	}
 	const { toast } = useToast();
-	const { user, setUser, habits, setHabits, rememberMe, setRememberMe } = useDataStore();
-	const [newHabit, setNewHabit] = useState<Habit>({
-		id: 0,
-		title: '',
-		description: '',
-		progress: 0,
-		frequency: 'Daily',
-		created: '',
-	});
+	const { user, setUser, habits, setHabits, rememberMe, setRememberMe, newHabit, setNewHabit } =
+		useDataStore();
 
 	useEffect(() => {
 		checkUserSession();
